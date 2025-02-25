@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: nestjs_app_teddy
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - DB_HOST=aws-0-sa-east-1.pooler.supabase.com
+      - DB_PORT=5432
+      - DB_USER=postgres.hnzksnyroathyiugouzu
+      - DB_PASS=teddy7735$$
+      - DB_NAME=postgres
+      - PORT=3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ['yarn', 'start:prod']
