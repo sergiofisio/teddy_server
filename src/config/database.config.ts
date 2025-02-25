@@ -1,18 +1,16 @@
-// database.service.ts
-import { neon } from '@neondatabase/serverless';
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import * as dotenv from 'dotenv';
 
-@Injectable()
-export class DatabaseService {
-  private readonly sql;
+dotenv.config();
 
-  constructor(private configService: ConfigService) {
-    const databaseUrl = this.configService.get('DATABASE_URL');
-    this.sql = neon(databaseUrl);
-  }
-  async getData() {
-    const data = await this.sql`...`;
-    return data;
-  }
-}
+export const typeOrmConfig: TypeOrmModuleOptions = {
+  type: 'postgres',
+  url: process.env.DATABASE_URL,
+  autoLoadEntities: true,
+  synchronize: true,
+  extra: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
+};
