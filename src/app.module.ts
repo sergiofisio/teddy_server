@@ -16,6 +16,11 @@ console.log(process.env.DATABASE_URL);
         url: process.env.DATABASE_URL,
         autoLoadEntities: true,
         synchronize: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
       }),
     }),
     ClientesModule,
