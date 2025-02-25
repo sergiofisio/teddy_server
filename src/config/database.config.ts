@@ -1,27 +1,18 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import * as dotenv from 'dotenv';
-import { Cliente } from './../modules/clientes/entities/cliente.entity/cliente.entity';
-import { Telefone } from './../modules/clientes/entities/telefone.entity/telefone.entity';
-import { Endereco } from './../modules/clientes/entities/endereco.entity/endereco.entity';
+// database.service.ts
+import { neon } from '@neondatabase/serverless';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
-dotenv.config();
+@Injectable()
+export class DatabaseService {
+  private readonly sql;
 
-console.log({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  pass: process.env.DB_PASS,
-  name: process.env.DB_NAME,
-  ssl: process.env.DB_SSL,
-});
-
-export const typeOrmConfig: TypeOrmModuleOptions = {
-  type: 'postgres',
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  synchronize: true,
-  autoLoadEntities: true,
-};
+  constructor(private configService: ConfigService) {
+    const databaseUrl = this.configService.get('DATABASE_URL');
+    this.sql = neon(databaseUrl);
+  }
+  async getData() {
+    const data = await this.sql`...`;
+    return data;
+  }
+}
