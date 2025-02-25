@@ -22,11 +22,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-  extra: {
-    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-  },
-  entities: [Cliente, Telefone, Endereco],
   synchronize: true,
   autoLoadEntities: true,
 };
