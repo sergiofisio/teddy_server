@@ -1,6 +1,6 @@
-import { Empresa } from "src/empresas/entities/empresa.entity/empresa.entity";
-import { Endereco } from "src/enderecos/entities/endereco.entity/endereco.entity";
-import { Telefone } from "src/telefones/entities/telefone.entity/telefone.entity";
+import { Empresa } from 'src/empresas/entities/empresa.entity/empresa.entity';
+import { Endereco } from 'src/enderecos/entities/endereco.entity/endereco.entity';
+import { Telefone } from 'src/telefones/entities/telefone.entity/telefone.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('clientes')

@@ -7,7 +7,7 @@ export class Endereco {
   id: number;
 
   @Column()
-  rua: string;
+  logradouro: string;
 
   @Column()
   numero: string;
