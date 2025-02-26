@@ -25,25 +25,32 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = process.env.PORT || 3000;
-
-  const networkInterfaces = os.networkInterfaces();
   let localIp = 'localhost';
+  let externalUrl = '';
 
-  for (const interfaceName in networkInterfaces) {
-    for (const net of networkInterfaces[interfaceName]!) {
-      if (net.family === 'IPv4' && !net.internal) {
-        localIp = net.address;
-        break;
+  if (process.env.RENDER_EXTERNAL_URL) {
+    externalUrl = process.env.RENDER_EXTERNAL_URL;
+  } else if (process.env.HOSTNAME) {
+    externalUrl = `http://${process.env.HOSTNAME}:${port}`;
+  } else {
+    const networkInterfaces = os.networkInterfaces();
+    for (const interfaceName in networkInterfaces) {
+      for (const net of networkInterfaces[interfaceName]!) {
+        if (net.family === 'IPv4' && !net.internal) {
+          localIp = net.address;
+          externalUrl = `http://${localIp}:${port}`;
+          break;
+        }
       }
     }
   }
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
   console.log(`\n🚀 Servidor rodando em:`);
   console.log(`   🖥️ Local:   http://localhost:${port}`);
-  console.log(`   🌎 Externo: http://${localIp}:${port}`);
-  console.log(`   📖 Swagger: http://${localIp}:${port}/api`);
+  console.log(`   🌎 Externo: ${externalUrl}`);
+  console.log(`   📖 Swagger: ${externalUrl}/api`);
 }
 
 bootstrap();

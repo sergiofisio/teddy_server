@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: nestjs_app
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - DATABASE_URL=postgresql://teddy_db_owner:npg_6G8xdFZjHaVn@ep-lucky-bush-a53agj53-pooler.us-east-2.aws.neon.tech/teddy_db?sslmode=require
+      - PORT=3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ['yarn', 'start:prod']
