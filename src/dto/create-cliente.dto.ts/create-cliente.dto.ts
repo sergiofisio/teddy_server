@@ -31,7 +31,7 @@ export class CreateClienteDto {
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => CreateEnderecoDto)
-  enderecos: CreateEnderecoDto;
+  enderecos: CreateEnderecoDto[];
 
   @IsArray()
   @ValidateNested({ each: true })

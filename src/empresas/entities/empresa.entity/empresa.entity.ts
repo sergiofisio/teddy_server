@@ -1,5 +1,5 @@
-import { Cliente } from 'src/clientes/entities/cliente.entity/cliente.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Cliente } from './../../../clientes/entities/cliente.entity/cliente.entity';
 
 @Entity('empresas')
 export class Empresa {

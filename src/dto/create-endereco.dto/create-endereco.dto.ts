@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateEnderecoDto {
@@ -13,6 +13,7 @@ export class CreateEnderecoDto {
   numero: string;
 
   @ApiProperty({ example: 'Apto 201', description: 'Complemento (opcional)' })
+  @IsOptional()
   @IsString()
   @MaxLength(50)
   complemento?: string;

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { TelefoneService } from './telefones.service';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
-import { CreateTelefoneDto } from 'src/dto/create-telefone.dto/create-telefone.dto';
+import { CreateTelefoneDto } from './../dto/create-telefone.dto/create-telefone.dto';
 
 @ApiTags('telefones')
 @Controller('telefones')

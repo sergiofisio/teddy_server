@@ -6,9 +6,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity/cliente.entity';
-import { Telefone } from 'src/telefones/entities/telefone.entity/telefone.entity';
-import { Endereco } from 'src/enderecos/entities/endereco.entity/endereco.entity';
-import { CreateClienteDto } from 'src/dto/create-cliente.dto.ts/create-cliente.dto';
+import { CreateClienteDto } from './../dto/create-cliente.dto.ts/create-cliente.dto';
+import { Telefone } from './../telefones/entities/telefone.entity/telefone.entity';
+import { Endereco } from './../enderecos/entities/endereco.entity/endereco.entity';
 import { UpdateClienteDto } from './../dto/update-cliente.dto/update-cliente.dto';
 
 @Injectable()
@@ -28,36 +28,38 @@ export class ClienteService {
     const { nome, email, cpf, salario, telefones, enderecos } =
       createClienteDto;
 
-    const emailExistente = await this.clienteRepository.findOne({
-      where: { email },
-    });
-    const cpfExistente = await this.clienteRepository.findOne({
-      where: { cpf },
+    const clienteExistente = await this.clienteRepository.findOne({
+      where: [{ email }, { cpf }],
     });
 
-    if (emailExistente || cpfExistente) {
+    if (clienteExistente) {
       throw new ConflictException('CPF ou Email já cadastrado.');
     }
 
-    let enderecoCriado = await this.enderecoRepository.findOne({
-      where: {
-        logradouro: enderecos.logradouro,
-        numero: enderecos.numero,
-        cep: enderecos.cep,
-      },
-    });
+    const enderecosCriados = await Promise.all(
+      enderecos.map(async (endereco) => {
+        let enderecoExistente = await this.enderecoRepository.findOne({
+          where: {
+            logradouro: endereco.logradouro,
+            numero: endereco.numero,
+            cep: endereco.cep,
+          },
+        });
 
-    if (!enderecoCriado) {
-      enderecoCriado = this.enderecoRepository.create(enderecos);
-      await this.enderecoRepository.save(enderecoCriado);
-    }
+        if (!enderecoExistente) {
+          enderecoExistente = this.enderecoRepository.create(endereco);
+          await this.enderecoRepository.save(enderecoExistente);
+        }
+        return enderecoExistente;
+      }),
+    );
 
     const cliente = this.clienteRepository.create({
       nome,
       email,
       cpf,
       salario,
-      enderecos: [enderecoCriado],
+      enderecos: enderecosCriados,
     });
 
     await this.clienteRepository.save(cliente);
@@ -72,19 +74,20 @@ export class ClienteService {
     return cliente;
   }
 
-  async findAll() {
+  async findAll(): Promise<Cliente[]> {
     return this.clienteRepository.find({
       relations: ['telefones', 'enderecos', 'empresas'],
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Cliente> {
     const cliente = await this.clienteRepository.findOne({
       where: { id },
       relations: ['telefones', 'enderecos', 'empresas'],
     });
+
     if (!cliente) {
-      throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
+      throw new NotFoundException(`Cliente com ID ${id} não encontrado.`);
     }
     return cliente;
   }
@@ -93,13 +96,7 @@ export class ClienteService {
     id: number,
     updateClienteDto: UpdateClienteDto,
   ): Promise<Cliente> {
-    const cliente = await this.clienteRepository.findOne({
-      where: { id },
-    });
-
-    if (!cliente) {
-      throw new NotFoundException(`Cliente com ID ${id} não encontrado.`);
-    }
+    const cliente = await this.findOne(id);
 
     if (updateClienteDto.email && updateClienteDto.email !== cliente.email) {
       const emailExistente = await this.clienteRepository.findOne({
@@ -125,8 +122,9 @@ export class ClienteService {
     return cliente;
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<{ message: string }> {
     const cliente = await this.findOne(id);
-    return this.clienteRepository.remove(cliente);
+    await this.clienteRepository.remove(cliente);
+    return { message: 'Cliente removido com sucesso!' };
   }
 }

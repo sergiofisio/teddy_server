@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Telefone } from './entities/telefone.entity/telefone.entity';
-import { CreateTelefoneDto } from 'src/dto/create-telefone.dto/create-telefone.dto';
 import { Cliente } from './../clientes/entities/cliente.entity/cliente.entity';
+import { CreateTelefoneDto } from './../dto/create-telefone.dto/create-telefone.dto';
 
 @Injectable()
 export class TelefoneService {
@@ -63,7 +63,15 @@ export class TelefoneService {
     return { message: 'Telefone atualizado com sucesso!' };
   }
 
-  async remove(id: number) {
-    return this.telefoneRepository.delete(id);
+  async remove(id: number): Promise<{ message: string }> {
+    const telefone = await this.telefoneRepository.findOne({ where: { id } });
+
+    if (!telefone) {
+      throw new NotFoundException(`Telefone com ID ${id} não encontrado.`);
+    }
+
+    await this.telefoneRepository.delete(id);
+
+    return { message: 'Telefone removido com sucesso!' };
   }
 }

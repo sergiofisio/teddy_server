@@ -6,8 +6,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Empresa } from './entities/empresa.entity/empresa.entity';
-import { CreateEmpresaDto } from 'src/dto/create-empresa.dto/create-empresa.dto';
 import { Cliente } from './../clientes/entities/cliente.entity/cliente.entity';
+import { CreateEmpresaDto } from './../dto/create-empresa.dto/create-empresa.dto';
 
 @Injectable()
 export class EmpresaService {
@@ -76,7 +76,13 @@ export class EmpresaService {
     return { message: 'Empresa atualizada com sucesso!' };
   }
 
-  async remove(id: number) {
-    return this.empresaRepository.delete(id);
+  async remove(id: number): Promise<{ message: string }> {
+    const deleteResult = await this.empresaRepository.delete(id);
+
+    if (!deleteResult.affected) {
+      throw new NotFoundException(`Empresa com ID ${id} não encontrada.`);
+    }
+
+    return { message: 'Empresa removida com sucesso!' };
   }
 }

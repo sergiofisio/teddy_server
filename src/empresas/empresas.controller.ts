@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { EmpresaService } from './empresas.service';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
-import { CreateEmpresaDto } from 'src/dto/create-empresa.dto/create-empresa.dto';
+import { CreateEmpresaDto } from './../dto/create-empresa.dto/create-empresa.dto';
 
 @ApiTags('empresas')
 @Controller('empresas')

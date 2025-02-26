@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Endereco } from './entities/endereco.entity/endereco.entity';
-import { CreateEnderecoDto } from 'src/dto/create-endereco.dto/create-endereco.dto';
 import { Cliente } from './../clientes/entities/cliente.entity/cliente.entity';
+import { CreateEnderecoDto } from './../dto/create-endereco.dto/create-endereco.dto';
 
 @Injectable()
 export class EnderecoService {
@@ -65,7 +65,15 @@ export class EnderecoService {
     return { message: 'Endereço atualizado com sucesso!' };
   }
 
-  async remove(id: number) {
-    return this.enderecoRepository.delete(id);
+  async remove(id: number): Promise<{ message: string }> {
+    const endereco = await this.enderecoRepository.findOne({ where: { id } });
+
+    if (!endereco) {
+      throw new NotFoundException(`Endereço com ID ${id} não encontrado.`);
+    }
+
+    await this.enderecoRepository.delete(id);
+
+    return { message: 'Endereço removido com sucesso!' };
   }
 }

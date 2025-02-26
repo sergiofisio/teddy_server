@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { EnderecoService } from './enderecos.service';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
-import { CreateEnderecoDto } from 'src/dto/create-endereco.dto/create-endereco.dto';
+import { CreateEnderecoDto } from './../dto/create-endereco.dto/create-endereco.dto';
 
 @ApiTags('enderecos')
 @Controller('enderecos')
