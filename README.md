@@ -33,17 +33,20 @@ Antes de começar, você precisará ter instalado em sua máquina:
 ### 🔹 Configuração do Ambiente
 
 1. Clone este repositório:
+
    ```sh
-   git clone https://github.com/seu-usuario/teddy-server.git
+   git clone https://github.com/sergiofisio/teddy_server.git
    cd teddy-server
    ```
 
 2. Instale as dependências:
+
    ```sh
    yarn install
    ```
 
 3. Configure as variáveis de ambiente:
+
    - Crie um arquivo `.env` na raiz do projeto e adicione as seguintes configurações:
      ```env
      DATABASE_URL=postgresql://usuario:senha@localhost:5432/teddy_db
@@ -51,6 +54,7 @@ Antes de começar, você precisará ter instalado em sua máquina:
      ```
 
 4. Execute a aplicação em **modo desenvolvimento**:
+
    ```sh
    yarn start:dev
    ```
@@ -65,6 +69,7 @@ Antes de começar, você precisará ter instalado em sua máquina:
 Caso prefira rodar a aplicação via Docker:
 
 1. Construa e suba os containers:
+
    ```sh
    docker-compose up --build -d
    ```
@@ -77,6 +82,7 @@ Caso prefira rodar a aplicação via Docker:
 ## ✅ Testes
 
 Para rodar os testes automatizados, utilize o comando:
+
 ```sh
 yarn test
 ```
