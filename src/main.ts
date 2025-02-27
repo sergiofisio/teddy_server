@@ -7,6 +7,12 @@ import * as os from 'os';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const config = new DocumentBuilder()
@@ -25,32 +31,28 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = process.env.PORT || 3000;
-  let localIp = 'localhost';
-  let externalUrl = '';
-
-  if (process.env.RENDER_EXTERNAL_URL) {
-    externalUrl = process.env.RENDER_EXTERNAL_URL;
-  } else if (process.env.HOSTNAME) {
-    externalUrl = `http://${process.env.HOSTNAME}:${port}`;
-  } else {
-    const networkInterfaces = os.networkInterfaces();
-    for (const interfaceName in networkInterfaces) {
-      for (const net of networkInterfaces[interfaceName]!) {
-        if (net.family === 'IPv4' && !net.internal) {
-          localIp = net.address;
-          externalUrl = `http://${localIp}:${port}`;
-          break;
-        }
-      }
-    }
-  }
+  const externalUrl =
+    process.env.RENDER_EXTERNAL_URL || getLocalNetworkAddress(Number(port));
 
   await app.listen(port, '0.0.0.0');
 
   console.log(`\n🚀 Servidor rodando em:`);
   console.log(`   🖥️ Local:   http://localhost:${port}`);
+  console.log(`   🖥️ Swagger Local:   http://localhost:${port}/api`);
   console.log(`   🌎 Externo: ${externalUrl}`);
-  console.log(`   📖 Swagger: ${externalUrl}/api`);
+  console.log(`   📖 Swagger externo: ${externalUrl}/api`);
+}
+
+function getLocalNetworkAddress(port: number): string {
+  const networkInterfaces = os.networkInterfaces();
+  for (const interfaceName in networkInterfaces) {
+    for (const net of networkInterfaces[interfaceName]!) {
+      if (net.family === 'IPv4' && !net.internal) {
+        return `http://${net.address}:${port}`;
+      }
+    }
+  }
+  return `http://localhost:${port}`;
 }
 
 bootstrap();
