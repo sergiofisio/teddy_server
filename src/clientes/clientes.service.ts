@@ -4,12 +4,13 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Cliente } from './entities/cliente.entity/cliente.entity';
 import { CreateClienteDto } from './../dto/create-cliente.dto.ts/create-cliente.dto';
 import { Telefone } from './../telefones/entities/telefone.entity/telefone.entity';
 import { Endereco } from './../enderecos/entities/endereco.entity/endereco.entity';
 import { UpdateClienteDto } from './../dto/update-cliente.dto/update-cliente.dto';
+import { Empresa } from './../empresas/entities/empresa.entity/empresa.entity';
 
 @Injectable()
 export class ClienteService {
@@ -22,10 +23,13 @@ export class ClienteService {
 
     @InjectRepository(Endereco)
     private enderecoRepository: Repository<Endereco>,
+
+    @InjectRepository(Empresa)
+    private empresaRepository: Repository<Empresa>,
   ) {}
 
   async create(createClienteDto: CreateClienteDto): Promise<Cliente> {
-    const { nome, email, cpf, salario, telefones, enderecos } =
+    const { nome, email, cpf, salario, telefones, enderecos, empresas } =
       createClienteDto;
 
     const clienteExistente = await this.clienteRepository.findOne({
@@ -71,6 +75,12 @@ export class ClienteService {
 
     cliente.telefones = telefonesCriados;
 
+    const empresasCriadas = empresas.map((empresa) =>
+      this.empresaRepository.create({ ...empresa, cliente }),
+    );
+    await this.empresaRepository.save(empresasCriadas);
+    cliente.empresas = empresasCriadas;
+
     return cliente;
   }
 
@@ -90,6 +100,13 @@ export class ClienteService {
       throw new NotFoundException(`Cliente com ID ${id} não encontrado.`);
     }
     return cliente;
+  }
+
+  async findMultipleByIds(ids: number[]): Promise<Cliente[]> {
+    return this.clienteRepository.find({
+      where: { id: In(ids) },
+      relations: ['telefones', 'enderecos', 'empresas'],
+    });
   }
 
   async update(
@@ -126,5 +143,17 @@ export class ClienteService {
     const cliente = await this.findOne(id);
     await this.clienteRepository.remove(cliente);
     return { message: 'Cliente removido com sucesso!' };
+  }
+
+  async removeMultiple(ids: number[]): Promise<{ message: string }> {
+    const deleteResult = await this.clienteRepository.delete({ id: In(ids) });
+
+    if (deleteResult.affected === 0) {
+      throw new NotFoundException(
+        `Nenhum cliente foi encontrado para remoção.`,
+      );
+    }
+
+    return { message: `Clientes removidos com sucesso!` };
   }
 }

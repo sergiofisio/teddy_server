@@ -26,6 +26,13 @@ describe('ClienteController', () => {
         cep: '01000-000',
       },
     ],
+    empresas: [
+      {
+        nome: 'Empresa X',
+        cnpj: '11222333000199',
+        valor: 15000.0,
+      },
+    ],
   };
 
   beforeEach(async () => {
@@ -76,6 +83,7 @@ describe('ClienteController', () => {
           cep: '01000-000',
         },
       ],
+      empresas: [{ nome: 'Empresa X', cnpj: '11222333000199', valor: 15000.0 }],
     };
 
     expect(await controller.create(clienteDto)).toEqual(mockCliente);
@@ -94,6 +102,7 @@ describe('ClienteController', () => {
       salario: 5000,
       telefones: [],
       enderecos: [],
+      empresas: [],
     };
 
     await expect(controller.create(clienteDto)).rejects.toThrow(

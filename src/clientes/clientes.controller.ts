@@ -6,9 +6,10 @@ import {
   Param,
   Delete,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { ClienteService } from './clientes.service';
-import { ApiTags, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { CreateClienteDto } from './../dto/create-cliente.dto.ts/create-cliente.dto';
 import { UpdateClienteDto } from './../dto/update-cliente.dto/update-cliente.dto';
 
@@ -63,6 +64,13 @@ export class ClienteController {
     return this.clienteService.findOne(id);
   }
 
+  @Get('/buscar-multiplos')
+  @ApiQuery({ name: 'ids', required: true, type: String, example: '1,2,3,4' })
+  findMultiple(@Query('ids') ids: string) {
+    const idArray = ids.split(',').map(Number);
+    return this.clienteService.findMultipleByIds(idArray);
+  }
+
   @Patch(':id')
   @ApiBody({
     type: UpdateClienteDto,
@@ -101,5 +109,22 @@ export class ClienteController {
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.clienteService.remove(id);
+  }
+
+  @Delete('/remover-multiplos')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          items: { type: 'number' },
+          example: [1, 2, 3, 4],
+        },
+      },
+    },
+  })
+  removeMultiple(@Body('ids') ids: number[]) {
+    return this.clienteService.removeMultiple(ids);
   }
 }

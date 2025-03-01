@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Cliente } from 'src/clientes/entities/cliente.entity/cliente.entity';
-import { Telefone } from 'src/telefones/entities/telefone.entity/telefone.entity';
-import { Endereco } from 'src/enderecos/entities/endereco.entity/endereco.entity';
-import { Empresa } from 'src/empresas/entities/empresa.entity/empresa.entity';
+import { Cliente } from './../../clientes/entities/cliente.entity/cliente.entity';
+import { Telefone } from './../../telefones/entities/telefone.entity/telefone.entity';
+import { Endereco } from './../../enderecos/entities/endereco.entity/endereco.entity';
+import { Empresa } from './../../empresas/entities/empresa.entity/empresa.entity';
 
 @Module({
   imports: [

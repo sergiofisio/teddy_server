@@ -17,7 +17,7 @@ export class Cliente {
   @Column({ unique: true })
   email: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'decimal', precision: 18, scale: 2, default: 0 })
   salario: number;
 
   @OneToMany(() => Telefone, (telefone) => telefone.cliente, { cascade: true })

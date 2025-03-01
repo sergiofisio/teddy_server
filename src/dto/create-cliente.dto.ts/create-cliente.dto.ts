@@ -41,5 +41,5 @@ export class CreateClienteDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateEmpresaDto)
-  empresas?: CreateEmpresaDto[];
+  empresas: CreateEmpresaDto[];
 }

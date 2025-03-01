@@ -9,6 +9,7 @@ import { CreateEnderecoDto } from '../dto/create-endereco.dto/create-endereco.dt
 import { CreateTelefoneDto } from '../dto/create-telefone.dto/create-telefone.dto';
 import { Telefone } from './../telefones/entities/telefone.entity/telefone.entity';
 import { Endereco } from './../enderecos/entities/endereco.entity/endereco.entity';
+import { CreateEmpresaDto } from './../dto/create-empresa.dto/create-empresa.dto';
 
 describe('ClienteService', () => {
   let service: ClienteService;
@@ -74,25 +75,27 @@ describe('ClienteService', () => {
           cep: '01000-000',
         } as CreateEnderecoDto,
       ],
+      empresas: [
+        {
+          nome: 'Empresa X',
+          cnpj: '11222333000199',
+          valor: 15000.0,
+        } as CreateEmpresaDto,
+      ],
     };
 
-    // Mock `findOne` para garantir que o cliente não existe
     jest.spyOn(clienteRepository, 'findOne').mockResolvedValue(null);
 
-    // Mock para `findOne` no EnderecoRepository, retornando null para criar um novo endereço
     jest.spyOn(enderecoRepository, 'findOne').mockResolvedValue(null);
 
-    // Mock do método `create` e `save` para EnderecoRepository
     const enderecoMock = { id: 1, ...clienteDto.enderecos[0] } as Endereco;
     jest.spyOn(enderecoRepository, 'create').mockReturnValue(enderecoMock);
     jest.spyOn(enderecoRepository, 'save').mockResolvedValue(enderecoMock);
 
-    // Mock para `create` e `save` no ClienteRepository
     const clienteMock = { id: 1, ...clienteDto } as Cliente;
     jest.spyOn(clienteRepository, 'create').mockReturnValue(clienteMock);
     jest.spyOn(clienteRepository, 'save').mockResolvedValue(clienteMock);
 
-    // Mock para `create` e `save` no TelefoneRepository
     const telefoneMock = {
       id: 1,
       codigo_pais: '55',
@@ -115,6 +118,7 @@ describe('ClienteService', () => {
       salario: 5000,
       telefones: [],
       enderecos: [],
+      empresas: [],
     };
 
     jest
